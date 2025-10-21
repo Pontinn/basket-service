@@ -6,6 +6,7 @@ import dev.pontin.basket_service.Entity.enums.Status;
 import dev.pontin.basket_service.Repository.BasketRepository;
 import dev.pontin.basket_service.client.response.PlatziProductResponse;
 import dev.pontin.basket_service.controller.requests.BasketRequest;
+import dev.pontin.basket_service.controller.requests.ProductRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -51,5 +52,36 @@ public class BasketService {
 
         basket.calculateTotalPrice();
         return basketRepository.save(basket);
+    }
+
+    public Basket updateBasket(String id, BasketRequest basketRequest) {
+        Basket basket = findById(id);
+
+        List<Product> products = new ArrayList<>();
+        basketRequest.products().forEach(productRequest -> {
+            PlatziProductResponse platziProductResponse = checkIfProductExists(productRequest);
+
+            products.add(Product.builder()
+                    .id(platziProductResponse.id())
+                    .title(platziProductResponse.title())
+                    .price(platziProductResponse.price())
+                    .quantity(productRequest.quantity())
+                    .build());
+        });
+
+        basket.setProducts(products);
+        basket.calculateTotalPrice();
+        
+        return basketRepository.save(basket);
+    }
+
+    private PlatziProductResponse checkIfProductExists(ProductRequest productRequest) {
+        PlatziProductResponse productsById = productService.getProductsById(productRequest.id());
+
+        if (productsById == null) {
+            throw new IllegalArgumentException("Id: " + productRequest.id() + " não está vincúlado a nenhum produto.");
+        }
+
+        return productsById;
     }
 }
