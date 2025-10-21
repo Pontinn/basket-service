@@ -34,7 +34,7 @@ public class BasketService {
 
         List<Product> products = new ArrayList<>();
         basketRequest.products().forEach(productRequest -> {
-            PlatziProductResponse platziProductResponse = productService.getProductsById(productRequest.id());
+            PlatziProductResponse platziProductResponse = checkIfProductExists(productRequest);
 
             products.add(Product.builder()
                     .id(platziProductResponse.id())
@@ -71,7 +71,7 @@ public class BasketService {
 
         basket.setProducts(products);
         basket.calculateTotalPrice();
-        
+
         return basketRepository.save(basket);
     }
 
