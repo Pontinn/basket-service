@@ -1,5 +1,7 @@
 package dev.pontin.basket_service.Entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import dev.pontin.basket_service.Entity.enums.PaymentMethods;
 import dev.pontin.basket_service.Entity.enums.Status;
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -27,6 +29,9 @@ public class Basket {
     private List<Product> products;
 
     private Status status;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private PaymentMethods paymentMethods;
 
     public void calculateTotalPrice() {
         this.totalPrice = products.stream().map(product -> product.getPrice()

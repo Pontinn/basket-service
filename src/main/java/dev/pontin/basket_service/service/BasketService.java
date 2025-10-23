@@ -6,6 +6,7 @@ import dev.pontin.basket_service.Entity.enums.Status;
 import dev.pontin.basket_service.Repository.BasketRepository;
 import dev.pontin.basket_service.client.response.PlatziProductResponse;
 import dev.pontin.basket_service.controller.requests.BasketRequest;
+import dev.pontin.basket_service.controller.requests.PaymentRequest;
 import dev.pontin.basket_service.controller.requests.ProductRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -71,6 +72,19 @@ public class BasketService {
 
         basket.setProducts(products);
         basket.calculateTotalPrice();
+
+        return basketRepository.save(basket);
+    }
+
+    public Basket payBasket(String id, PaymentRequest paymentRequest) {
+        Basket basket = findById(id);
+
+        if (basket.getStatus() == Status.SOLD) {
+            throw new IllegalArgumentException("Este carrinho já foi pago usando o método de pagamento: " + basket.getPaymentMethods());
+        }
+
+        basket.setStatus(Status.SOLD);
+        basket.setPaymentMethods(paymentRequest.paymentMethod());
 
         return basketRepository.save(basket);
     }

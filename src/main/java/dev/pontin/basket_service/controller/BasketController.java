@@ -2,6 +2,7 @@ package dev.pontin.basket_service.controller;
 
 import dev.pontin.basket_service.Entity.Basket;
 import dev.pontin.basket_service.controller.requests.BasketRequest;
+import dev.pontin.basket_service.controller.requests.PaymentRequest;
 import dev.pontin.basket_service.service.BasketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,5 +29,10 @@ public class BasketController {
     @PutMapping("/{id}")
     public ResponseEntity<Basket> updateBasket(@PathVariable("id") String id, @RequestBody BasketRequest request) {
         return ResponseEntity.ok().body(basketService.updateBasket(id, request));
+    }
+
+    @PutMapping("/{id}/payment")
+    public ResponseEntity<Basket> payBasket(@PathVariable("id") String id, @RequestBody PaymentRequest request) {
+        return ResponseEntity.ok().body(basketService.payBasket(id, request));
     }
 }
